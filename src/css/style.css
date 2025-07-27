@@ -220,7 +220,8 @@ main {
 }
 
 .priority-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
   padding: 0.25rem 0.75rem;
   border-radius: 20px;
   font-size: 0.75rem;
@@ -228,11 +229,70 @@ main {
   text-transform: capitalize;
   margin-left: 0.75rem;
   white-space: nowrap;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
 }
 
-.priority-high .priority-badge { background-color: #fde8e8; color: #c53030; }
-.priority-medium .priority-badge { background-color: #feefd0; color: #9c4221; }
-.priority-low .priority-badge { background-color: #ebf8ff; color: #2b6cb0; }
+/* High Priority - Red */
+.todo.high-priority .priority-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  border-left: 3px solid #ef4444;
+}
+
+.todo.high-priority .priority-badge::before {
+  content: '❗';
+  margin-right: 0.25rem;
+  font-size: 0.9em;
+}
+
+/* Medium Priority - Orange */
+.todo.medium-priority .priority-badge {
+  background-color: #ffedd5;
+  color: #9a3412;
+  border-left: 3px solid #f97316;
+}
+
+.todo.medium-priority .priority-badge::before {
+  content: '🔸';
+  margin-right: 0.25rem;
+  font-size: 0.9em;
+}
+
+/* Low Priority - Blue */
+.todo.low-priority .priority-badge {
+  background-color: #dbeafe;
+  color: #1e40af;
+  border-left: 3px solid #3b82f6;
+}
+
+.todo.low-priority .priority-badge::before {
+  content: '🔹';
+  margin-right: 0.25rem;
+  font-size: 0.9em;
+}
+
+/* Hover effects */
+.priority-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .todo.high-priority .priority-badge { 
+    background-color: #7f1d1d;
+    color: #fecaca;
+  }
+  .todo.medium-priority .priority-badge { 
+    background-color: #7c2d12;
+    color: #fed7aa;
+  }
+  .todo.low-priority .priority-badge { 
+    background-color: #1e3a8a;
+    color: #bfdbfe;
+  }
+}
 
 .todo-description {
   color: #7f8c8d;
@@ -344,28 +404,79 @@ main {
 }
 
 #projects-list li {
-  padding: 0.75rem 1rem;
+  padding: 0.5rem 1rem;
   cursor: pointer;
   border-radius: 4px;
-  margin: 0.25rem 0;
-  transition: background-color 0.2s;
+  margin-bottom: 0.25rem;
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  gap: 0.5rem;
-}
-
-#projects-list li:before {
-  content: '📁';
-  font-size: 1.1em;
+  transition: background-color 0.2s ease;
 }
 
 #projects-list li:hover {
-  background: rgba(255,255,255,0.1);
+  background-color: #f5f5f5;
 }
 
 #projects-list li.active {
-  background: rgba(255,255,255,0.2);
-  font-weight: 600;
+  background-color: #e3f2fd;
+  font-weight: 500;
+  color: #1a237e; /* Darker text color for better contrast */
+}
+
+#projects-list li.active .project-name {
+  color: #1a237e; /* Ensure project name has good contrast */
+}
+
+#projects-list li.active:hover {
+  background-color: #bbdefb;
+}
+
+#projects-list li.active:hover .project-name {
+  color: #0d47a1; /* Slightly darker on hover for better visibility */
+}
+
+#projects-list .project-name {
+  flex: 1;
+  margin-right: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#projects-list .project-actions {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  display: flex;
+  gap: 0.25rem;
+}
+
+#projects-list li:hover .project-actions,
+#projects-list li.active .project-actions {
+  opacity: 1;
+}
+
+.btn-edit-project {
+  background: none;
+  border: none;
+  color: #666;
+  padding: 0.25rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.btn-edit-project:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
+.btn-edit-project i {
+  font-size: 0.9rem;
 }
 
 /* Responsive design */

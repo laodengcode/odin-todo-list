@@ -74,6 +74,18 @@ class TodoApp {
     this.saveProjects();
     this.setActiveProject(project.id);
   }
+  
+  renameProject(projectId, newName) {
+    if (!newName || !newName.trim()) return false;
+    
+    const project = this.projects.find(p => p.id === projectId);
+    if (!project) return false;
+    
+    project.name = newName.trim();
+    this.saveProjects();
+    this.render();
+    return true;
+  }
 
   addTodo(todoData) {
     const activeProject = this.getActiveProject();
@@ -141,11 +153,27 @@ class TodoApp {
 
     // Project list click handler
     document.getElementById('projects-list').addEventListener('click', (e) => {
-      const listItem = e.target.closest('li');
-      if (listItem) {
-        const projectId = listItem.dataset.projectId;
-        this.setActiveProject(projectId);
+      const target = e.target;
+      const listItem = target.closest('li');
+      if (!listItem) return;
+      
+      const projectId = listItem.dataset.projectId;
+      
+      // Handle edit project button click
+      if (target.closest('.btn-edit-project')) {
+        e.stopPropagation(); // Prevent triggering the project selection
+        const project = this.projects.find(p => p.id === projectId);
+        if (project) {
+          const newName = prompt('Enter new project name:', project.name);
+          if (newName && newName !== project.name) {
+            this.renameProject(projectId, newName);
+          }
+        }
+        return;
       }
+      
+      // Handle project selection
+      this.setActiveProject(projectId);
     });
 
     // Add todo button

@@ -8,12 +8,20 @@ export default class UI {
 
     projects.forEach(project => {
       const li = document.createElement('li');
-      li.textContent = project.name;
       li.dataset.projectId = project.id;
       
       if (project.id === activeProjectId) {
         li.classList.add('active');
       }
+      
+      li.innerHTML = `
+        <span class="project-name">${project.name}</span>
+        <div class="project-actions">
+          <button class="btn btn-edit-project" title="Rename project">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      `;
       
       projectsList.appendChild(li);
     });
