@@ -79,18 +79,36 @@ class TodoApp {
     const activeProject = this.getActiveProject();
     if (!activeProject) return false;
 
-    const todo = new Todo(
-      todoData.title,
-      todoData.description,
-      todoData.dueDate,
-      todoData.priority,
-      activeProject.id
-    );
-    
-    activeProject.addTodo(todo);
-    this.saveProjects();
-    this.render();
-    return true;
+    if (todoData.id) {
+      // Update existing todo
+      const todo = activeProject.getTodoById(todoData.id);
+      if (todo) {
+        todo.update({
+          title: todoData.title,
+          description: todoData.description,
+          dueDate: todoData.dueDate,
+          priority: todoData.priority
+        });
+        this.saveProjects();
+        this.render();
+        return true;
+      }
+      return false;
+    } else {
+      // Create new todo
+      const todo = new Todo(
+        todoData.title,
+        todoData.description,
+        todoData.dueDate,
+        todoData.priority,
+        activeProject.id
+      );
+      
+      activeProject.addTodo(todo);
+      this.saveProjects();
+      this.render();
+      return true;
+    }
   }
 
   toggleTodoComplete(todoId) {
@@ -173,8 +191,11 @@ class TodoApp {
       
       // Edit button
       if (target.closest('.btn-edit')) {
-        // TODO: Implement edit functionality
-        console.log('Edit todo:', todoId);
+        const project = this.getActiveProject();
+        const todo = project.getTodoById(todoId);
+        if (todo) {
+          UI.toggleTodoForm(true, todo);
+        }
       }
     });
   }

@@ -19,10 +19,19 @@ export default class Todo {
   }
 
   update(updates) {
-    Object.assign(this, updates);
+    // Only update properties that are actually provided in the updates object
+    if (updates.title !== undefined) this.title = updates.title;
+    if (updates.description !== undefined) this.description = updates.description;
+    if (updates.priority !== undefined) this.priority = updates.priority;
+    if (updates.projectId !== undefined) this.projectId = updates.projectId;
+    if (updates.completed !== undefined) this.completed = updates.completed;
+    
+    // Special handling for dueDate to ensure it's always a Date object
     if (updates.dueDate) {
       this.dueDate = new Date(updates.dueDate);
     }
+    
+    return this; // Return the updated todo for method chaining
   }
 
   getFormattedDate() {

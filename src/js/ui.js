@@ -33,26 +33,28 @@ export default class UI {
     if (todos.length === 0) {
       todosContainer.innerHTML = `
         <div class="empty-state">
-          <i class="far fa-clipboard"></i>
-          <p>No todos yet. Click "Add Todo" to get started!</p>
-        </div>`;
+          <i class="fas fa-tasks"></i>
+          <h3>No todos yet</h3>
+          <p>Click the "Add Todo" button to get started</p>
+        </div>
+      `;
       return;
     }
 
-    // Sort todos by due date (earliest first) and then by priority
+    // Sort todos by due date (ascending) and priority (high to low)
     const sortedTodos = [...todos].sort((a, b) => {
-      const dateDiff = new Date(a.dueDate) - new Date(b.dueDate);
-      if (dateDiff !== 0) return dateDiff;
+      if (a.dueDate < b.dueDate) return -1;
+      if (a.dueDate > b.dueDate) return 1;
       
-      const priorityOrder = { high: 0, medium: 1, low: 2 };
-      return priorityOrder[a.priority] - priorityOrder[b.priority];
+      const priorityOrder = { high: 3, medium: 2, low: 1 };
+      return priorityOrder[b.priority] - priorityOrder[a.priority];
     });
 
     sortedTodos.forEach(todo => {
       const todoElement = document.createElement('div');
-      todoElement.className = `todo ${todo.completed ? 'completed' : ''} priority-${todo.priority}`;
+      todoElement.className = `todo ${todo.priority}-priority ${todo.completed ? 'completed' : ''}`;
       todoElement.dataset.todoId = todo.id;
-      
+
       const dueDate = new Date(todo.dueDate);
       const formattedDate = format(dueDate, 'MMM d, yyyy');
       
@@ -60,46 +62,77 @@ export default class UI {
         <div class="todo-content">
           <div class="todo-header">
             <h3>${todo.title}</h3>
-            <span class="priority-badge ${todo.priority}">${todo.priority}</span>
+            <span class="priority-badge">${todo.priority}</span>
           </div>
           ${todo.description ? `<p class="todo-description">${todo.description}</p>` : ''}
           <div class="todo-meta">
             <span class="due-date">
-              <i class="far fa-calendar-alt"></i> ${formattedDate}
+              <i class="far fa-calendar-alt"></i>
+              ${formattedDate}
             </span>
-            <span class="todo-status">
-              <input type="checkbox" id="todo-${todo.id}" ${todo.completed ? 'checked' : ''} class="todo-complete">
-              <label for="todo-${todo.id}">${todo.completed ? 'Completed' : 'Mark Complete'}</label>
-            </span>
+            <div class="todo-actions">
+              <button class="btn btn-edit" title="Edit">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-delete" title="Delete">
+                <i class="fas fa-trash"></i>
+              </button>
+            </div>
           </div>
         </div>
-        <div class="todo-actions">
-          <button class="btn btn-edit" data-todo-id="${todo.id}">
-            <i class="fas fa-edit"></i>
-          </button>
-          <button class="btn btn-delete" data-todo-id="${todo.id}">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
+        <label class="todo-status">
+          <input type="checkbox" class="todo-complete" ${todo.completed ? 'checked' : ''}>
+          ${todo.completed ? 'Completed' : 'Mark as complete'}
+        </label>
       `;
-      
+
       todosContainer.appendChild(todoElement);
     });
   }
 
-  static toggleTodoForm(show = true) {
+  static toggleTodoForm(show = true, todo = null) {
     const formContainer = document.getElementById('todo-form-container');
+    const form = document.getElementById('todo-form');
     const addButton = document.getElementById('add-todo-btn');
+    const formTitle = formContainer.querySelector('h3');
+    const submitButton = form.querySelector('button[type="submit"]');
     
     if (show) {
+      if (todo) {
+        // Edit mode
+        form.dataset.editId = todo.id;
+        formTitle.textContent = 'Edit Todo';
+        submitButton.textContent = 'Update Todo';
+        this.populateTodoForm(todo);
+      } else {
+        // Add mode
+        form.dataset.editId = '';
+        formTitle.textContent = 'Add New Todo';
+        submitButton.textContent = 'Add Todo';
+        this.resetTodoForm();
+      }
+      
       formContainer.classList.remove('hidden');
       addButton.classList.add('hidden');
       document.getElementById('todo-title').focus();
     } else {
       formContainer.classList.add('hidden');
       addButton.classList.remove('hidden');
-      this.resetTodoForm();
+      form.reset();
+      form.removeAttribute('data-edit-id');
     }
+  }
+  
+  static populateTodoForm(todo) {
+    document.getElementById('todo-title').value = todo.title;
+    document.getElementById('todo-description').value = todo.description || '';
+    
+    // Format date for the date input (YYYY-MM-DD)
+    const dueDate = new Date(todo.dueDate);
+    const formattedDate = dueDate.toISOString().split('T')[0];
+    document.getElementById('todo-due-date').value = formattedDate;
+    
+    document.getElementById('todo-priority').value = todo.priority || 'medium';
   }
 
   static resetTodoForm() {
@@ -114,11 +147,20 @@ export default class UI {
   }
 
   static getTodoFormData() {
+    const form = document.getElementById('todo-form');
+    const isEdit = form.dataset.editId !== '';
+    
     const title = document.getElementById('todo-title').value.trim();
     const description = document.getElementById('todo-description').value.trim();
     const dueDate = document.getElementById('todo-due-date').value;
     const priority = document.getElementById('todo-priority').value;
     
-    return { title, description, dueDate, priority };
+    return { 
+      id: isEdit ? form.dataset.editId : null,
+      title, 
+      description, 
+      dueDate, 
+      priority 
+    };
   }
 }
