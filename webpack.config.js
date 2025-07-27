@@ -9,6 +9,7 @@ module.exports = {
     filename: 'bundle.js',
     path: path.resolve(__dirname, 'dist'),
     clean: true,
+    publicPath: '/odin-todo-list/', // Needed for GitHub Pages to handle client-side routing
   },
   module: {
     rules: [
