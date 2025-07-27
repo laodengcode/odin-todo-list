@@ -1,0 +1,25 @@
+{
+  "name": "odin-todo-list",
+  "version": "1.0.0",
+  "description": "At this point you’ve already had a fair amount of practice using the various techniques we’ve shown you. But we’ve been throwing a lot of information your way, so before we move on we’re going to take a minute to slow down and work on another great project that ties these techniques together. You should have the chance to show off most (if not all) of your newfound skills!",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve --open",
+    "build": "webpack --mode production",
+    "watch": "webpack --watch"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "style-loader": "^4.0.0",
+    "webpack": "^5.100.2",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  },
+  "dependencies": {
+    "date-fns": "^4.1.0"
+  }
+}
